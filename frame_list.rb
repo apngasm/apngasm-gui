@@ -1,24 +1,35 @@
-class FrameList
+require 'gtk3'
 
-  def initialize
+class FrameList
+  attr_accessor :scrolled_window
+
+  def initialize(scrolled_window)
+    @scrolled_window = scrolled_window
     @list = Array.new
   end
 
-  def add(data)
+  def <<(data)
     @list << data
+    @cur = @list.size - 1
   end
 
-  def get_filename(position)
+  def cur
+    @cur
+  end
+
+  def filename(position = nil)
+    return @list[@cur].filename if position.nil?
     return nil if position > @list.size
     return @list[position].filename
   end
 
-  def get_pixbuf(position)
+  def pixbuf(position = nil)
+    return @list[@cur].pixbuf if position.nil?
     return nil if position > @list.size
     return @list[position].pixbuf
   end
 
-  def position_change(old_position, new_position)
+  def swap(old_position, new_position)
     @list[old_position], @list[new_position] = @list[new_position], @list[old_position]
   end
 
