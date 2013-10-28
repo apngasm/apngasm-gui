@@ -1,13 +1,11 @@
-require 'rubygems'
-gem 'gtk3'
+require_relative '../apngasm-gui.rb'
+require_relative 'frame_list.rb'
+require_relative 'frame.rb'
 
-require './frame_list.rb'
-require './frame.rb'
-
-class EditorWindow
+class APNGAsmGUI::EditorWindow
   def initialize(width = 800, height = 600)
     @builder = Gtk::Builder.new
-    @builder.add_from_file("layout.glade")
+    @builder.add_from_file(File.expand_path('../layout.glade', __FILE__))
 
 
     $window_base = @builder["editor_window"]
@@ -15,9 +13,9 @@ class EditorWindow
 
     @preview = @builder["preview_image"]
 
-    @frame_list = FrameList.new(@builder["frame_list_scrolled_window"])
+    @frame_list = APNGAsmGUI::FrameList.new(@builder["frame_list_scrolled_window"])
 
-    @frame_hbox = Gtk::HBox.new
+    @frame_hbox = Gtk::Box.new(:horizontal)
     @frame_list.scrolled_window.add_with_viewport(@frame_hbox)
 
     @add_frame_button = @builder["add_frame_button"]

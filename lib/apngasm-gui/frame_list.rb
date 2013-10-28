@@ -1,6 +1,6 @@
 require 'gtk3'
 
-class FrameList
+class APNGAsmGUI::FrameList
   attr_accessor :scrolled_window
 
   def initialize(scrolled_window)

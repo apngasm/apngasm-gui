@@ -1,6 +1,6 @@
 require 'gtk3'
 
-class Frame
+class APNGAsmGUI::Frame
   attr_accessor :filename, :position, :pixbuf
 
   def initialize(image)
