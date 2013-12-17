@@ -20,21 +20,20 @@ class APNGAsmGUI::EditorWindow
 
     @add_frame_button = @builder["add_frame_button"]
     @add_frame_button.signal_connect('clicked') {
-      dialog = Gtk::FileChooserDialog.new("Open File",
-                                          $window_base,
-                                          Gtk::FileChooser::ACTION_OPEN,
-                                          nil,
-                                          [Gtk::Stock::CANCEL, Gtk::Dialog::RESPONSE_CANCEL],
-                                          [Gtk::Stock::OPEN, Gtk::Dialog::RESPONSE_ACCEPT])
+      dialog = Gtk::FileChooserDialog.new(title: "Open File",
+                                          parent: $window_base,
+                                          action: Gtk::FileChooser::Action::OPEN,
+                                          buttons: [[Gtk::Stock::CANCEL, Gtk::ResponseType::CANCEL],
+                                                   [Gtk::Stock::OPEN, Gtk::ResponseType::ACCEPT]])
       filter = Gtk::FileFilter.new
       filter.name = "Img File"
       filter.add_pattern("*.png")
       dialog.add_filter(filter)
-      if dialog.run == Gtk::Dialog::RESPONSE_ACCEPT
+      if dialog.run == Gtk::ResponseType::ACCEPT
         # Get file
         frame = create_frame(dialog.filename)
 
-        @frame_hbox.pack_start(frame, false, false, 10)
+        @frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
         $window_base.show_all
       end
       dialog.destroy
@@ -52,13 +51,13 @@ class APNGAsmGUI::EditorWindow
     frame = Gtk::Frame.new
     img = Gtk::Image.new(filename)
     @preview.set_pixbuf img.pixbuf
-    box = Gtk::VBox.new
-    box.pack_start(img, false, false, 10)
+    box = Gtk::Box.new(:vertical)
+    box.pack_start(img, expand: false, fill: false, padding: 10)
     adjustment = Gtk::Adjustment.new(10, 1, 999, 1, 1, 0)
     delay_spinner = Gtk::SpinButton.new(adjustment, 1, 0)
-    delete_button = Gtk::Button.new('Delete')
-    box.pack_start(delay_spinner, false, false, 0)
-    box.pack_start(delete_button, false, false, 0)
+    delete_button = Gtk::Button.new(label: 'Delete')
+    box.pack_start(delay_spinner, expand: false, fill: false)
+    box.pack_start(delete_button, expand: false, fill: false)
     frame.add(box)
 
     return frame
