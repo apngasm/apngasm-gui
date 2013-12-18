@@ -23,8 +23,8 @@ class APNGAsmGUI::Frame < Gtk::Frame
     box.pack_start(image, expand: true, fill: false, padding: 10)
 
     adjustment = Gtk::Adjustment.new(10, 1, 999, 1, 1, 0)
-    delay_spinner = Gtk::SpinButton.new(adjustment, 1, 0)
-    box.pack_start(delay_spinner, expand: false, fill: false)
+    @delay_spinner = Gtk::SpinButton.new(adjustment, 1, 0)
+    box.pack_start(@delay_spinner, expand: false, fill: false)
 
     delete_button = Gtk::Button.new(label: 'Delete')
     delete_button.signal_connect('clicked') {
@@ -67,6 +67,10 @@ class APNGAsmGUI::Frame < Gtk::Frame
      pixbuf = pixbuf.scale(size * scale, size, Gdk::Pixbuf::INTERP_BILINEAR)
    end
    pixbuf
+  end
+
+  def delay
+    @delay_spinner.value
   end
 
   def change_image

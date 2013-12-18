@@ -1,20 +1,16 @@
 require 'gtk3'
 
 class APNGAsmGUI::FrameList
-  attr_accessor :scrolled_window
+  attr_accessor :scrolled_window, :cur
 
   def initialize(scrolled_window)
     @scrolled_window = scrolled_window
-    @list = Array.new
+    @list = []
   end
 
   def <<(data)
     @list << data
     @cur = @list.size - 1
-  end
-
-  def cur
-    @cur
   end
 
   def filename(position = nil)
@@ -33,4 +29,23 @@ class APNGAsmGUI::FrameList
     @list[old_position], @list[new_position] = @list[new_position], @list[old_position]
   end
 
+  def size
+    @list.size
+  end
+
+  def first
+    @cur = 0
+  end
+
+  def back
+    @cur -= 1
+  end
+
+  def forward
+    @cur += 1
+  end
+
+  def last
+    @cur = @list.size - 1
+  end
 end
