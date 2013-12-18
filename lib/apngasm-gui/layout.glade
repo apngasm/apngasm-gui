@@ -180,19 +180,27 @@
                 <property name="can_focus">False</property>
                 <property name="spacing">10</property>
                 <child>
-                  <object class="GtkViewport" id="viewport_preview">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="resize_mode">queue</property>
-                    <child>
-                      <object class="GtkImage" id="preview_image">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="xpad">10</property>
-                        <property name="ypad">10</property>
-                        <property name="stock">gtk-missing-image</property>
-                      </object>
-                    </child>
+                  <object class="GtkScrolledWindow" id="viewport_scrolledwindow">
+                  <property name="visible">True</property>
+                  <property name="can_focus">false</property>
+                  <property name="hscrollbar_policy">automatic</property>
+                  <property name="vscrollbar_policy">automatic</property>
+                  <child>
+                    <object class="GtkViewport" id="viewport_preview">
+                      <property name="visible">True</property>
+                      <property name="can_focus">False</property>
+                      <property name="resize_mode">queue</property>
+                      <child>
+                        <object class="GtkImage" id="preview_image">
+                          <property name="visible">True</property>
+                          <property name="can_focus">False</property>
+                          <property name="xpad">10</property>
+                          <property name="ypad">10</property>
+                          <property name="stock">gtk-missing-image</property>
+                        </object>
+                      </child>
+                    </object>
+                  </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>

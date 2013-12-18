@@ -1,7 +1,6 @@
 require 'gtk3'
 
 class APNGAsmGUI::Frame < Gtk::Frame
-  PREVIEW_SIZE = 500
   THUMBNAIL_SIZE = 100
   attr_accessor :filename, :pixbuf
 
@@ -13,9 +12,6 @@ class APNGAsmGUI::Frame < Gtk::Frame
 
     image = Gtk::Image.new(file: filename)
     @pixbuf = image.pixbuf
-    if @pixbuf.width > PREVIEW_SIZE || @pixbuf.height > PREVIEW_SIZE
-      @pixbuf = resize(@pixbuf, PREVIEW_SIZE)
-    end
     if image.pixbuf.width > THUMBNAIL_SIZE || image.pixbuf.height > THUMBNAIL_SIZE
       image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
     end

@@ -1,7 +1,7 @@
 require_relative '../apngasm-gui.rb'
 require_relative 'frame_list.rb'
 require_relative 'frame.rb'
-require_relative '../rapngasm'
+require 'rapngasm'
 
 class APNGAsmGUI::EditorWindow
   def initialize(width = 800, height = 600)
