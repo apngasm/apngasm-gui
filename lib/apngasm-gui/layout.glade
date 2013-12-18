@@ -310,7 +310,7 @@
           <object class="GtkScrolledWindow" id="frame_list_scrolled_window">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="min_content_height">150</property>
+            <property name="min_content_height">200</property>
             <child>
               <placeholder/>
             </child>

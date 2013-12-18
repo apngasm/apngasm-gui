@@ -3,12 +3,13 @@ require 'gtk3'
 class APNGAsmGUI::Frame < Gtk::Frame
   PREVIEW_SIZE = 500
   THUMBNAIL_SIZE = 100
-  attr_accessor :filename, :position, :pixbuf
+  attr_accessor :filename, :pixbuf
 
-  def initialize(filename, parent)
+  def initialize(filename, parent_list, parent_frame)
     super()
     @filename = filename
-    @parent = parent
+    @parent_list = parent_list
+    @parent_frame = parent_frame
 
     image = Gtk::Image.new(file: filename)
     @pixbuf = image.pixbuf
@@ -19,8 +20,17 @@ class APNGAsmGUI::Frame < Gtk::Frame
       image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
     end
 
+    image_button = Gtk::Button.new
+    image_button.set_relief(Gtk::ReliefStyle::NONE)
+    button_box = Gtk::Box.new(:vertical)
+    button_box.pack_start(image)
+    image_button.add(button_box)
+    image_button.signal_connect('clicked') do
+      @parent_list.focus(self)
+    end
+
     box = Gtk::Box.new(:vertical)
-    box.pack_start(image, expand: true, fill: false, padding: 10)
+    box.pack_start(image_button, expand: true, fill: false, padding: 10)
 
     adjustment = Gtk::Adjustment.new(10, 1, 999, 1, 1, 0)
     @delay_spinner = Gtk::SpinButton.new(adjustment, 1, 0)
@@ -28,35 +38,13 @@ class APNGAsmGUI::Frame < Gtk::Frame
 
     delete_button = Gtk::Button.new(label: 'Delete')
     delete_button.signal_connect('clicked') {
-      @parent.remove(self)
+      @parent_list.remove(self)
+      @parent_frame.remove(self)
     }
     box.pack_start(delete_button, expand: false, fill: false)
 
     add(box)
   end
-
-#  def initialize(image)
-#    super()
-#    set_size_request(150, 150)
-#
-#    @pixbuf = Gdk::Pixbuf.new(filename)
-#    resize if @pixbuf.width > 150 || @pixbuf.height > 150
-#
-#    @filename = filename
-#    @position = position
-#    @click = false
-#    @image = Gtk::Image.new(@pixbuf)
-#
-#    # TODO ノーマル画像とプッシュした時の画像
-#
-#    add(@image)
-#
-#    signal_connect('clicked') {
-#      p self.filename
-#      p self.position
-#      # change_image
-#    }
-#  end
 
   def resize(pixbuf, size)
    if pixbuf.width >= pixbuf.height

@@ -15,7 +15,7 @@ class APNGAsmGUI::EditorWindow
     @window_base = @builder['editor_window']
     @window_base.set_default_size(width, height)
 
-    @preview = @builder['preview_image']
+    $preview = @builder['preview_image']
 
     @frame_list = APNGAsmGUI::FrameList.new(@builder['frame_list_scrolled_window'])
 
@@ -25,16 +25,20 @@ class APNGAsmGUI::EditorWindow
     @first_button = @builder['first_button']
     @first_button.signal_connect('clicked') do
       if @frame_list.size > 1
-        @preview.set_pixbuf(@frame_list.pixbuf(0))
-        @frame_list.first
+        @frame_list.swap(@frame_list.cur, 0)
+        $preview.set_pixbuf(@frame_list.pixbuf(0))
+        @frame_list.cur = 0
+        frame_hbox_reload
       end
     end
 
     @back_button = @builder['back_button']
     @back_button.signal_connect('clicked') do
-      if @frame_list.size > 1 && @frame_list.cur != 0
-        @frame_list.back
-        @preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+      if @frame_list.cur != 0
+        @frame_list.swap(@frame_list.cur, @frame_list.cur - 1)
+        @frame_list.cur -= 1
+        $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+        frame_hbox_reload
       end
     end
 
@@ -49,17 +53,21 @@ class APNGAsmGUI::EditorWindow
 
     @forward_button = @builder['forward_button']
     @forward_button.signal_connect('clicked') do
-      if @frame_list.size > 1 && @frame_list.cur < @frame_list.size - 1
-        @frame_list.forward
-        @preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+      if @frame_list.cur < @frame_list.size - 1
+        @frame_list.swap(@frame_list.cur, @frame_list.cur + 1)
+        @frame_list.cur += 1
+        $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+        frame_hbox_reload
       end
     end
 
     @last_button = @builder['last_button']
     @last_button.signal_connect('clicked') do
       if @frame_list.size > 1
-        @frame_list.last
-        @preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+        @frame_list.swap(@frame_list.cur, @frame_list.size - 1)
+        @frame_list.cur = @frame_list.size - 1
+        $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+        frame_hbox_reload
       end
     end
 
@@ -120,10 +128,18 @@ class APNGAsmGUI::EditorWindow
   end
 
   def create_frame(filename)
-    frame = APNGAsmGUI::Frame.new(filename, @frame_hbox)
+    frame = APNGAsmGUI::Frame.new(filename, @frame_list, @frame_hbox)
     @frame_list << frame
-    @preview.set_pixbuf(frame.pixbuf)
+    $preview.set_pixbuf(frame.pixbuf)
     @frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
+  end
+
+  def frame_hbox_reload
+    @frame_list.list.each { |frame| @frame_hbox.remove(frame) }
+    @frame_list.list.each do |frame|
+      @frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
+    end
+    @window_base.show_all
   end
 
   def play_animation
