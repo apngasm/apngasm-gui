@@ -1,16 +1,20 @@
 require 'gtk3'
 
 class APNGAsmGUI::FrameList
-  attr_accessor :scrolled_window, :list, :cur
+  attr_accessor :frame_hbox, :cur, :list
 
-  def initialize(scrolled_window)
-    @scrolled_window = scrolled_window
+  def initialize(frame_hbox)
+    @frame_hbox = frame_hbox
     @list = []
   end
 
   def <<(data)
     @list << data
     @cur = @list.size - 1
+  end
+
+  def size
+    @list.size
   end
 
   def filename(position = nil)
@@ -40,8 +44,9 @@ class APNGAsmGUI::FrameList
     end
   end
 
-  def remove(child)
+  def delete(child)
     @list.delete(child)
+    @frame_hbox.remove(child)
     @cur -= 1 unless @cur == 0
     if @list.size == 0
       $preview.set_stock(Gtk::Stock::MISSING_IMAGE)
@@ -55,7 +60,10 @@ class APNGAsmGUI::FrameList
     $preview.set_pixbuf(@list[@cur].pixbuf)
   end
 
-  def size
-    @list.size
+  def view_reload
+    @list.each { |frame| @frame_hbox.remove(frame) }
+    @list.each do |frame|
+      @frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
+    end
   end
 end

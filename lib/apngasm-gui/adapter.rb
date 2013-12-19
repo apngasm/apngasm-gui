@@ -8,15 +8,20 @@ class APNGAsmGUI::Adapter
   end
 
   def import(frame_list, filename)
-    @frame_list = frame_list
-    frames = @apngasm.disassemble(File.expand_path(filename))
+    apngframes = @apngasm.disassemble(filename)
+    base_filename = filename[0, filename.length - 4]
+    apngframes.each_with_index do |apngframe, i|
+      # frame = APNGAsmGUI::Frame.new("#{base_filename}#{i}.png", @frame_list, apngframe)
+      # frame_list << frame
+    end
+    frame_list
   end
 
   def export(frame_list, filename)
-    @frame_list = frame_list
-    @frame_list.list.each do |frame|
-      @apngasm.add_frame_from_file(File.expand_path(frame.filename), frame.delay)
+    frame_list.list.each do |frame|
+      frame.apngframe.delay_numerator(frame.delay)
+      @apngasm.add_frame(frame.apngframe)
     end
-    @apngasm.assemble(File.expand_path(filename))
+    @apngasm.assemble(filename)
   end
 end

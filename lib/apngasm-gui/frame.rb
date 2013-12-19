@@ -2,27 +2,31 @@ require 'gtk3'
 
 class APNGAsmGUI::Frame < Gtk::Frame
   THUMBNAIL_SIZE = 100
-  attr_accessor :filename, :pixbuf
+  attr_accessor :filename, :pixbuf, :apngframe
 
-  def initialize(filename, parent_list, parent_frame)
+  def initialize(filename, parent, apngframe = nil)
     super()
     @filename = filename
-    @parent_list = parent_list
-    @parent_frame = parent_frame
+    @parent = parent
+    @apngframe = apngframe
 
-    image = Gtk::Image.new(file: filename)
-    @pixbuf = image.pixbuf
+    if @apngframe.nil?
+      @apngframe = APNGFrame.new(@filename)
+      image = Gtk::Image.new(file: @filename)
+    else
+      # TODO Create image from APNGFrame...
+      # image = Gtk::Image.new
+    end
     if image.pixbuf.width > THUMBNAIL_SIZE || image.pixbuf.height > THUMBNAIL_SIZE
       image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
     end
+    @pixbuf = image.pixbuf
 
     image_button = Gtk::Button.new
     image_button.set_relief(Gtk::ReliefStyle::NONE)
-    button_box = Gtk::Box.new(:vertical)
-    button_box.pack_start(image)
-    image_button.add(button_box)
+    image_button.add(image)
     image_button.signal_connect('clicked') do
-      @parent_list.focus(self)
+      @parent.focus(self)
     end
 
     box = Gtk::Box.new(:vertical)
@@ -30,12 +34,12 @@ class APNGAsmGUI::Frame < Gtk::Frame
 
     adjustment = Gtk::Adjustment.new(100, 1, 999, 1, 1, 0)
     @delay_spinner = Gtk::SpinButton.new(adjustment, 1, 0)
+    set_delay(@apngframe.delay_numerator)
     box.pack_start(@delay_spinner, expand: false, fill: false)
 
     delete_button = Gtk::Button.new(label: 'Delete')
     delete_button.signal_connect('clicked') {
-      @parent_list.remove(self)
-      @parent_frame.remove(self)
+      @parent.delete(self)
     }
     box.pack_start(delete_button, expand: false, fill: false)
 
@@ -60,22 +64,4 @@ class APNGAsmGUI::Frame < Gtk::Frame
   def set_delay(value)
     @delay_spinner.set_value(value)
   end
-
-  def change_image
-#    remove(@image)
-#
-#    if @click
-#      @click = false
-#      # TODO 画像変更
-#      #@image = 
-#    else
-#      @click = true
-#      # TODO 画像変更
-#      #@image = 
-#    end
-#
-#    add(@image)
-#    $window_base.show_all
-  end
-
 end

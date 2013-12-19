@@ -17,10 +17,11 @@ class APNGAsmGUI::EditorWindow
 
     $preview = @builder['preview_image']
 
-    @frame_list = APNGAsmGUI::FrameList.new(@builder['frame_list_scrolled_window'])
-
     @frame_hbox = Gtk::Box.new(:horizontal)
-    @frame_list.scrolled_window.add_with_viewport(@frame_hbox)
+    @frame_list = APNGAsmGUI::FrameList.new(@frame_hbox)
+
+    @scrolled_window = @builder['frame_list_scrolled_window']
+    @scrolled_window.add_with_viewport(@frame_hbox)
 
     @first_button = @builder['first_button']
     @first_button.signal_connect('clicked') do
@@ -28,7 +29,7 @@ class APNGAsmGUI::EditorWindow
         @frame_list.swap(@frame_list.cur, 0)
         $preview.set_pixbuf(@frame_list.pixbuf(0))
         @frame_list.cur = 0
-        frame_hbox_reload
+        view_reload
       end
     end
 
@@ -38,7 +39,7 @@ class APNGAsmGUI::EditorWindow
         @frame_list.swap(@frame_list.cur, @frame_list.cur - 1)
         @frame_list.cur -= 1
         $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
-        frame_hbox_reload
+        view_reload
       end
     end
 
@@ -57,7 +58,7 @@ class APNGAsmGUI::EditorWindow
         @frame_list.swap(@frame_list.cur, @frame_list.cur + 1)
         @frame_list.cur += 1
         $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
-        frame_hbox_reload
+        view_reload
       end
     end
 
@@ -67,7 +68,7 @@ class APNGAsmGUI::EditorWindow
         @frame_list.swap(@frame_list.cur, @frame_list.size - 1)
         @frame_list.cur = @frame_list.size - 1
         $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
-        frame_hbox_reload
+        view_reload
       end
     end
 
@@ -79,7 +80,7 @@ class APNGAsmGUI::EditorWindow
     @import_button = @builder['file_chooser']
     @import_button.add_filter(create_filter)
     @import_button.signal_connect('file_set') do |response|
-      file_import(response.filename)
+      file_import(File.expand_path(response.filename))
     end
 
     @export_button = @builder['export_button']
@@ -112,7 +113,7 @@ class APNGAsmGUI::EditorWindow
 
     if dialog.run == Gtk::ResponseType::ACCEPT
       dialog.filenames.each do |filename|
-        create_frame(filename)
+        create_frame(File.expand_path(filename))
       end
       @window_base.show_all
     end
@@ -121,10 +122,10 @@ class APNGAsmGUI::EditorWindow
 
   def export_dialog
     dialog = create_dialog('Save File', Gtk::FileChooser::Action::SAVE, Gtk::Stock::SAVE)
-    dialog.do_overwrite_confirmation(true)
+    dialog.do_overwrite_confirmation = true
 
     if dialog.run == Gtk::ResponseType::ACCEPT
-      file_export(dialog.filename)
+      file_export(File.expand_path(dialog.filename))
     end
     dialog.destroy
   end
@@ -145,17 +146,14 @@ class APNGAsmGUI::EditorWindow
   end
 
   def create_frame(filename)
-    frame = APNGAsmGUI::Frame.new(filename, @frame_list, @frame_hbox)
+    frame = APNGAsmGUI::Frame.new(filename, @frame_list)
     @frame_list << frame
     $preview.set_pixbuf(frame.pixbuf)
-    @frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
+    @frame_list.frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
   end
 
-  def frame_hbox_reload
-    @frame_list.list.each { |frame| @frame_hbox.remove(frame) }
-    @frame_list.list.each do |frame|
-      @frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
-    end
+  def view_reload
+    @frame_list.view_reload
     @window_base.show_all
   end
 
@@ -169,12 +167,11 @@ class APNGAsmGUI::EditorWindow
     @play = false
     image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_PLAY, size: Gtk::IconSize::IconSize::BUTTON)
     @play_button.set_image(image)
-    @frame_list.focus(@frame_list.list[0])
   end
 
   def file_import(filename)
     @adapter = APNGAsmGUI::Adapter.new
-    @adapter.export(@frame_list, filename)
+    @adapter.import(@frame_list, filename)
   end
 
   def file_export(filename)
