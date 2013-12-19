@@ -1,7 +1,7 @@
 require_relative '../apngasm-gui.rb'
 require_relative 'frame_list.rb'
 require_relative 'frame.rb'
-require 'rapngasm'
+require_relative 'adapter.rb'
 
 class APNGAsmGUI::EditorWindow
   def initialize(width = 800, height = 600)
@@ -73,17 +73,18 @@ class APNGAsmGUI::EditorWindow
 
     @add_frame_button = @builder['add_frame_button']
     @add_frame_button.signal_connect('clicked') do
-      open_dialog
+      add_dialog
     end
 
     @import_button = @builder['file_chooser']
+    @import_button.add_filter(create_filter)
     @import_button.signal_connect('file_set') do |response|
       file_import(response.filename)
     end
 
     @export_button = @builder['export_button']
     @export_button.signal_connect('clicked') do
-      file_export if @frame_list.size > 0
+      export_dialog if @frame_list.size > 0
     end
 
     @loop_checkbutton = @builder['loop_checkbutton']
@@ -104,19 +105,10 @@ class APNGAsmGUI::EditorWindow
     Gtk.main
   end
 
-  def open_dialog
-    dialog = Gtk::FileChooserDialog.new(title: 'Open File',
-                                          parent: @window_base,
-                                          action: Gtk::FileChooser::Action::OPEN,
-                                          buttons: [[Gtk::Stock::CANCEL, Gtk::ResponseType::CANCEL],
-                                                   [Gtk::Stock::OPEN, Gtk::ResponseType::ACCEPT]])
-    dialog.set_default_size(400, 400)
-    dialog.set_select_multiple(true)
-
-    filter = Gtk::FileFilter.new
-    filter.name = 'Img File'
-    filter.add_pattern('*.png')
-    dialog.add_filter(filter)
+  def add_dialog
+    dialog = create_dialog('Open File', Gtk::FileChooser::Action::OPEN, Gtk::Stock::OPEN)
+    dialog.set_select_multiple(true) 
+    dialog.add_filter(create_filter)
 
     if dialog.run == Gtk::ResponseType::ACCEPT
       dialog.filenames.each do |filename|
@@ -125,6 +117,31 @@ class APNGAsmGUI::EditorWindow
       @window_base.show_all
     end
     dialog.destroy
+  end
+
+  def export_dialog
+    dialog = create_dialog('Save File', Gtk::FileChooser::Action::SAVE, Gtk::Stock::SAVE)
+    dialog.do_overwrite_confirmation(true)
+
+    if dialog.run == Gtk::ResponseType::ACCEPT
+      file_export(dialog.filename)
+    end
+    dialog.destroy
+  end
+
+  def create_dialog(title, action, stock)
+    Gtk::FileChooserDialog.new(title: title,
+                               parent: @window_base,
+                               action: action,
+                               buttons: [[Gtk::Stock::CANCEL, Gtk::ResponseType::CANCEL],
+                                        [stock, Gtk::ResponseType::ACCEPT]])
+  end
+
+  def create_filter
+    filter = Gtk::FileFilter.new
+    filter.name = 'PNG File'
+    filter.add_pattern('*.png')
+    filter
   end
 
   def create_frame(filename)
@@ -152,14 +169,16 @@ class APNGAsmGUI::EditorWindow
     @play = false
     image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_PLAY, size: Gtk::IconSize::IconSize::BUTTON)
     @play_button.set_image(image)
+    @frame_list.focus(@frame_list.list[0])
   end
 
   def file_import(filename)
+    @adapter = APNGAsmGUI::Adapter.new
+    @adapter.export(@frame_list, filename)
   end
 
-  def file_export
-  end
-
-  def create_apng_frame(filename, delay = 100)
+  def file_export(filename)
+    @adapter = APNGAsmGUI::Adapter.new
+    @adapter.export(@frame_list, filename)
   end
 end

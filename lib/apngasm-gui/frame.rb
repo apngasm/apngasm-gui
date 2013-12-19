@@ -28,7 +28,7 @@ class APNGAsmGUI::Frame < Gtk::Frame
     box = Gtk::Box.new(:vertical)
     box.pack_start(image_button, expand: true, fill: false, padding: 10)
 
-    adjustment = Gtk::Adjustment.new(10, 1, 999, 1, 1, 0)
+    adjustment = Gtk::Adjustment.new(100, 1, 999, 1, 1, 0)
     @delay_spinner = Gtk::SpinButton.new(adjustment, 1, 0)
     box.pack_start(@delay_spinner, expand: false, fill: false)
 
@@ -55,6 +55,10 @@ class APNGAsmGUI::Frame < Gtk::Frame
 
   def delay
     @delay_spinner.value
+  end
+
+  def set_delay(value)
+    @delay_spinner.set_value(value)
   end
 
   def change_image
