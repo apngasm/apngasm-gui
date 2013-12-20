@@ -26,20 +26,14 @@ class APNGAsmGUI::EditorWindow
     @first_button = @builder['first_button']
     @first_button.signal_connect('clicked') do
       if @frame_list.size > 1
-        @frame_list.swap(@frame_list.cur, 0)
-        $preview.set_pixbuf(@frame_list.pixbuf(0))
-        @frame_list.cur = 0
-        view_reload
+        swap_frame(@frame_list.cur, 0)
       end
     end
 
     @back_button = @builder['back_button']
     @back_button.signal_connect('clicked') do
       if @frame_list.cur != 0
-        @frame_list.swap(@frame_list.cur, @frame_list.cur - 1)
-        @frame_list.cur -= 1
-        $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
-        view_reload
+        swap_frame(@frame_list.cur, @frame_list.cur - 1)
       end
     end
 
@@ -55,20 +49,14 @@ class APNGAsmGUI::EditorWindow
     @forward_button = @builder['forward_button']
     @forward_button.signal_connect('clicked') do
       if @frame_list.cur < @frame_list.size - 1
-        @frame_list.swap(@frame_list.cur, @frame_list.cur + 1)
-        @frame_list.cur += 1
-        $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
-        view_reload
+        swap_frame(@frame_list.cur, @frame_list.cur + 1)
       end
     end
 
     @last_button = @builder['last_button']
     @last_button.signal_connect('clicked') do
       if @frame_list.size > 1
-        @frame_list.swap(@frame_list.cur, @frame_list.size - 1)
-        @frame_list.cur = @frame_list.size - 1
-        $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
-        view_reload
+        swap_frame(@frame_list.cur, @frame_list.size - 1)
       end
     end
 
@@ -152,6 +140,13 @@ class APNGAsmGUI::EditorWindow
     @frame_list.frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
   end
 
+  def swap_frame(old_position, new_position)
+    @frame_list.swap(old_position, new_position)
+    @frame_list.cur = new_position
+    $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+    view_reload
+  end
+
   def view_reload
     @frame_list.view_reload
     @window_base.show_all
@@ -170,12 +165,12 @@ class APNGAsmGUI::EditorWindow
   end
 
   def file_import(filename)
-    @adapter = APNGAsmGUI::Adapter.new
-    @adapter.import(@frame_list, filename)
+    adapter = APNGAsmGUI::Adapter.new
+    adapter.import(@frame_list, filename)
   end
 
   def file_export(filename)
-    @adapter = APNGAsmGUI::Adapter.new
-    @adapter.export(@frame_list, filename)
+    adapter = APNGAsmGUI::Adapter.new
+    adapter.export(@frame_list, filename)
   end
 end

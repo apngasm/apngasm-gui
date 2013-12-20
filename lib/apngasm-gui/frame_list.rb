@@ -32,13 +32,11 @@ class APNGAsmGUI::FrameList
   def swap(old_position, new_position)
     case new_position
     when 0 then
-      tmp = @list[old_position]
-      @list.delete_at(old_position)
-      @list.insert(0, tmp)
+      @list.insert(0, @list[old_position])
+      @list.delete_at(old_position + 1)
     when @list.size - 1 then
-      tmp = @list[old_position]
+      @list << @list[old_position]
       @list.delete_at(old_position)
-      @list << tmp
     else
       @list[old_position], @list[new_position] = @list[new_position], @list[old_position]
     end

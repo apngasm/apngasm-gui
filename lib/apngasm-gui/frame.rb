@@ -15,12 +15,17 @@ class APNGAsmGUI::Frame < Gtk::Frame
       image = Gtk::Image.new(file: @filename)
     else
       # TODO Create image from APNGFrame...
+      # pixbuf = Gdk::Pixbuf.new(Gdk::Pixbuf::COLORSPACE_RGB, true, 8, 64, 64)
+      # pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s)
+      # p pixbuf
       # image = Gtk::Image.new
+      # image.pixbuf = pixbuf
     end
     if image.pixbuf.width > THUMBNAIL_SIZE || image.pixbuf.height > THUMBNAIL_SIZE
       image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
     end
     @pixbuf = image.pixbuf
+    p @pixbuf.pixels
 
     image_button = Gtk::Button.new
     image_button.set_relief(Gtk::ReliefStyle::NONE)
