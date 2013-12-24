@@ -25,7 +25,6 @@ class APNGAsmGUI::Frame < Gtk::Frame
       image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
     end
     @pixbuf = image.pixbuf
-    p @pixbuf.pixels
 
     image_button = Gtk::Button.new
     image_button.set_relief(Gtk::ReliefStyle::NONE)

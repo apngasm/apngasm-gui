@@ -156,9 +156,20 @@ class APNGAsmGUI::EditorWindow
     @play = true
     image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_STOP, size: Gtk::IconSize::IconSize::BUTTON)
     @play_button.set_image(image)
+
+    @handle = GLib::Idle.add {
+      p @frame_list.cur
+      p @frame_list.delay(@frame_list.cur)
+      $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+      sleep(@frame_list.delay(@frame_list.cur) * 0.001)
+      @frame_list.cur += 1
+      @frame_list.cur >= @frame_list.size ? @frame_list.cur = 0 : @frame_list.cur
+    }
   end
 
   def stop_animation
+    GLib::Source.remove(@handle)
+
     @play = false
     image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_PLAY, size: Gtk::IconSize::IconSize::BUTTON)
     @play_button.set_image(image)

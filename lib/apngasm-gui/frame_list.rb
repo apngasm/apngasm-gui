@@ -29,6 +29,12 @@ class APNGAsmGUI::FrameList
     return @list[position].pixbuf
   end
 
+  def delay(position = nil)
+    return @list[@cur].delay if position.nil?
+    return nil if position > @list.size
+    return @list[position].delay
+  end
+
   def swap(old_position, new_position)
     case new_position
     when 0 then
