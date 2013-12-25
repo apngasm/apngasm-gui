@@ -180,11 +180,12 @@ class APNGAsmGUI::EditorWindow
 
   def file_import(filename)
     adapter = APNGAsmGUI::Adapter.new
-    adapter.import(@frame_list, filename)
+    @frame_list = adapter.import(@frame_list, filename)
+    $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
   end
 
   def file_export(filename)
     adapter = APNGAsmGUI::Adapter.new
-    adapter.export(@frame_list, filename)
+    adapter.export(@frame_list, filename, @frames_status)
   end
 end
