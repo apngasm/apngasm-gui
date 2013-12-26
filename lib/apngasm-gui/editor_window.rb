@@ -182,6 +182,7 @@ class APNGAsmGUI::EditorWindow
     adapter = APNGAsmGUI::Adapter.new
     @frame_list = adapter.import(@frame_list, filename)
     $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+    @window_base.show_all
   end
 
   def file_export(filename)
