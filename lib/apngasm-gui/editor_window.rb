@@ -180,8 +180,12 @@ class APNGAsmGUI::EditorWindow
 
   def file_import(filename)
     adapter = APNGAsmGUI::Adapter.new
-    @frame_list = adapter.import(@frame_list, filename)
-    $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur))
+    new_frames = adapter.import(@frame_list, filename)
+    new_frames.each do |frame|
+      @frame_list << frame
+      @frame_list.frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
+    end
+    $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur)) if @frame_list.size > 0
     @window_base.show_all
   end
 

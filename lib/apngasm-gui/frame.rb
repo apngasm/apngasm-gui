@@ -6,23 +6,26 @@ class APNGAsmGUI::Frame < Gtk::Frame
 
   def initialize(filename, parent, apngframe = nil)
     super()
+    @generator = APNGFrameGenerator.new
     @filename = filename
     @parent = parent
     @apngframe = apngframe
 
     if @apngframe.nil?
-      @apngframe = APNGFrame.new(@filename)
+      @apngframe = @generator.init_with_file(@filename)
       image = Gtk::Image.new(file: @filename)
     else
       # TODO Create image from APNGFrame...
-      # pixbuf = Gdk::Pixbuf.new(Gdk::Pixbuf::COLORSPACE_RGB, true, 8, 64, 64)
+      pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s, Gdk::Pixbuf::COLORSPACE_RGB, true, 8,
+                               @apngframe.width, @apngframe.height, @apngframe.width)
       # pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s)
-      # p pixbuf
-      # image = Gtk::Image.new
-      # image.pixbuf = pixbuf
+      image = Gtk::Image.new
+      image.pixbuf = pixbuf
     end
-    if image.pixbuf.width > THUMBNAIL_SIZE || image.pixbuf.height > THUMBNAIL_SIZE
-      image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
+    if image.pixbuf.width != nil && image.pixbuf.height != nil
+      if image.pixbuf.width > THUMBNAIL_SIZE || image.pixbuf.height > THUMBNAIL_SIZE
+        image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
+      end
     end
     @pixbuf = image.pixbuf
 
