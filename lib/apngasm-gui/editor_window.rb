@@ -86,6 +86,31 @@ class APNGAsmGUI::EditorWindow
       @frames_status = @frames_checkbutton.active?
     end
 
+    @file_new = @builder['menu_file_new']
+    @file_new.signal_connect('activate') do
+      p 'click new'
+    end
+
+    @file_open = @builder['menu_file_open']
+    @file_open.signal_connect('activate') do
+      p 'click open'
+    end
+
+    @file_save = @builder['menu_file_save']
+    @file_save.signal_connect('activate') do
+      p 'click save'
+    end
+
+    @file_save_as = @builder['menu_file_save_as']
+    @file_save_as.signal_connect('activate') do
+      p 'click save-as'
+    end
+
+    @file_quit = @builder['menu_file_quit']
+    @file_quit.signal_connect('activate') do
+      p 'click quit'
+    end
+
     @window_base.signal_connect('destroy') do
       Gtk.main_quit
     end

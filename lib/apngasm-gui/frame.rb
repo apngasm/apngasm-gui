@@ -16,9 +16,10 @@ class APNGAsmGUI::Frame < Gtk::Frame
       image = Gtk::Image.new(file: @filename)
     else
       # TODO Create image from APNGFrame...
-      pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s, Gdk::Pixbuf::COLORSPACE_RGB, true, 8,
-                               @apngframe.width, @apngframe.height, @apngframe.width)
+      # pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s, Gdk::Pixbuf::COLORSPACE_RGB, true, 8,
+      #                          @apngframe.width, @apngframe.height, @apngframe.width)
       # pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s)
+      pixbuf = Gdk::Pixbuf.new(Gdk::Pixbuf::COLORSPACE_RGB, true, 8, @apngframe.width, @apngframe.height)
       image = Gtk::Image.new
       image.pixbuf = pixbuf
     end

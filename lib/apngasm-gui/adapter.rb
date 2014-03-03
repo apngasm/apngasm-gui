@@ -1,8 +1,8 @@
-#require 'rapngasm'
+require 'rapngasm'
 require 'fileutils'
 require_relative 'frame_list.rb'
 require_relative 'frame.rb'
-require_relative 'rapngasm.bundle'
+# require_relative 'rapngasm.bundle'
 
 class APNGAsmGUI::Adapter
   def initialize
@@ -21,6 +21,7 @@ class APNGAsmGUI::Adapter
 
   def export(frame_list, filename, frames_status)
     filename = set_filename(filename)
+    @apngasm.reset
 
     frame_list.list.each do |frame|
       @apngasm.add_frame(set_apngframe(frame))
@@ -30,6 +31,8 @@ class APNGAsmGUI::Adapter
     if frames_status
       save_frames(filename)
     end
+
+    GC.start
   end
 
   def save_frames(filename)
@@ -41,7 +44,7 @@ class APNGAsmGUI::Adapter
   end
 
   def set_apngframe(frame)
-    # TODO  二度アセンブルすると画像にゴミが入るので確認
+    # TODO
     frame.apngframe.delay_numerator(frame.delay)
     frame.apngframe
     # new_frame = APNGFrame.new(frame.filename)
