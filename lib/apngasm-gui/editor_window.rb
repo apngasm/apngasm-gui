@@ -91,18 +91,18 @@ class APNGAsmGUI::EditorWindow
       p 'click new'
     end
 
-    @file_open = @builder['menu_file_open']
-    @file_open.signal_connect('activate') do
-      p 'click open'
+    @file_import = @builder['menu_file_import']
+    @file_import.signal_connect('activate') do
+      import_dialog
     end
 
-    @file_save = @builder['menu_file_save']
-    @file_save.signal_connect('activate') do
+    @file_export = @builder['menu_file_export']
+    @file_export.signal_connect('activate') do
       p 'click save'
     end
 
-    @file_save_as = @builder['menu_file_save_as']
-    @file_save_as.signal_connect('activate') do
+    @file_export_frames = @builder['menu_file_export_frames']
+    @file_export_frames.signal_connect('activate') do
       p 'click save-as'
     end
 
@@ -129,6 +129,17 @@ class APNGAsmGUI::EditorWindow
         create_frame(File.expand_path(filename))
       end
       @window_base.show_all
+    end
+    dialog.destroy
+  end
+
+  def import_dialog
+    dialog = create_dialog('Import File', Gtk::FileChooser::Action::OPEN, Gtk::Stock::OPEN)
+    dialog.add_filter(create_filter)
+
+    if dialog.run == Gtk::ResponseType::ACCEPT
+      file_import(File.expand_path(dialog.filename))
+      @import_button.filename = dialog.filename
     end
     dialog.destroy
   end
