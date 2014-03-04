@@ -25,16 +25,12 @@ class APNGAsmGUI::EditorWindow
 
     @first_button = @builder['first_button']
     @first_button.signal_connect('clicked') do
-      if @frame_list.size > 1
-        swap_frame(@frame_list.cur, 0)
-      end
+      move_to_first
     end
 
     @back_button = @builder['back_button']
     @back_button.signal_connect('clicked') do
-      if @frame_list.cur != 0
-        swap_frame(@frame_list.cur, @frame_list.cur - 1)
-      end
+      move_to_prev
     end
 
     @play_button = @builder['play_button']
@@ -48,16 +44,12 @@ class APNGAsmGUI::EditorWindow
 
     @forward_button = @builder['forward_button']
     @forward_button.signal_connect('clicked') do
-      if @frame_list.cur < @frame_list.size - 1
-        swap_frame(@frame_list.cur, @frame_list.cur + 1)
-      end
+      move_to_next
     end
 
     @last_button = @builder['last_button']
     @last_button.signal_connect('clicked') do
-      if @frame_list.size > 1
-        swap_frame(@frame_list.cur, @frame_list.size - 1)
-      end
+      move_to_last
     end
 
     @add_frame_button = @builder['add_frame_button']
@@ -79,6 +71,7 @@ class APNGAsmGUI::EditorWindow
     @loop_checkbutton = @builder['loop_checkbutton']
     @loop_checkbutton.signal_connect('toggled') do
       @loop_status = @loop_checkbutton.active?
+      @play_loop.set_active(@loop_status)
     end
 
     @frames_checkbutton = @builder['frames_checkbutton']
@@ -88,7 +81,10 @@ class APNGAsmGUI::EditorWindow
 
     @file_new = @builder['menu_file_new']
     @file_new.signal_connect('activate') do
-      p 'click new'
+      label = Gtk::Label.new('New File?')
+      label.show
+      dialog = create_confirm_dialog(label, "new")
+      dialog.destroy
     end
 
     @file_import = @builder['menu_file_import']
@@ -98,17 +94,78 @@ class APNGAsmGUI::EditorWindow
 
     @file_export = @builder['menu_file_export']
     @file_export.signal_connect('activate') do
-      p 'click save'
+      export_dialog if @frame_list.size > 0
     end
 
     @file_export_frames = @builder['menu_file_export_frames']
     @file_export_frames.signal_connect('activate') do
-      p 'click save-as'
+      @frames_checkbutton.set_active(true)
+      @frames_status = true
+      export_dialog if @frame_list.size > 0
     end
 
     @file_quit = @builder['menu_file_quit']
     @file_quit.signal_connect('activate') do
-      p 'click quit'
+      label = Gtk::Label.new('Quit?')
+      label.show
+      dialog = create_confirm_dialog(label, "quit")
+      dialog.destroy
+    end
+
+    @frame_add = @builder['menu_frame_add']
+    @frame_add.signal_connect('activate') do
+      add_dialog
+    end
+
+    @frame_next = @builder['menu_frame_next']
+    @frame_next.signal_connect('activate') do
+      move_to_next
+    end
+
+    @frame_prev = @builder['menu_frame_prev']
+    @frame_prev.signal_connect('activate') do
+      move_to_prev
+    end
+
+    @frame_last = @builder['menu_frame_last']
+    @frame_last.signal_connect('activate') do
+      move_to_last
+    end
+
+    @frame_first = @builder['menu_frame_first']
+    @frame_first.signal_connect('activate') do
+      move_to_first
+    end
+
+    @frame_delete = @builder['menu_frame_delete']
+    @frame_delete.signal_connect('activate') do
+      if @frame_list.size > 1
+        @frame_list.delete_at(@frame_list.cur)
+      end
+    end
+
+    @play_play = @builder['menu_play_play']
+    @play_play.signal_connect('activate') do
+      if @frame_list.size > 1 && !@play
+        play_animation
+      end
+    end
+
+    @play_stop = @builder['menu_play_stop']
+    @play_stop.signal_connect('activate') do
+      stop_animation if @play
+    end
+
+    @play_loop = @builder['menu_play_loop']
+    @play_loop.set_active(@loop_status)
+    @play_loop.signal_connect('toggled') do
+      @loop_status = @play_loop.active?
+      @loop_checkbutton.set_active(@loop_status)
+    end
+
+    @help_about = @builder['menu_help_about']
+    @help_about.signal_connect('activate') do
+      p 'about...'
     end
 
     @window_base.signal_connect('destroy') do
@@ -117,6 +174,30 @@ class APNGAsmGUI::EditorWindow
 
     @window_base.show_all
     Gtk.main
+  end
+
+  def move_to_next
+    if @frame_list.cur < @frame_list.size - 1
+      swap_frame(@frame_list.cur, @frame_list.cur + 1)
+    end
+  end
+
+  def move_to_prev
+    if @frame_list.cur != 0
+      swap_frame(@frame_list.cur, @frame_list.cur - 1)
+    end
+  end
+
+  def move_to_last
+    if @frame_list.size > 1
+      swap_frame(@frame_list.cur, @frame_list.size - 1)
+    end
+  end
+
+  def move_to_first
+    if @frame_list.size > 1
+      swap_frame(@frame_list.cur, 0)
+    end
   end
 
   def add_dialog
@@ -130,6 +211,7 @@ class APNGAsmGUI::EditorWindow
       end
       @window_base.show_all
     end
+
     dialog.destroy
   end
 
@@ -141,6 +223,7 @@ class APNGAsmGUI::EditorWindow
       file_import(File.expand_path(dialog.filename))
       @import_button.filename = dialog.filename
     end
+
     dialog.destroy
   end
 
@@ -151,6 +234,7 @@ class APNGAsmGUI::EditorWindow
     if dialog.run == Gtk::ResponseType::ACCEPT
       file_export(File.expand_path(dialog.filename))
     end
+
     dialog.destroy
   end
 
@@ -167,6 +251,19 @@ class APNGAsmGUI::EditorWindow
     filter.name = 'PNG File'
     filter.add_pattern('*.png')
     filter
+  end
+
+  def create_confirm_dialog(title, mode)
+    dialog = Gtk::Dialog.new
+    dialog.child.pack_start(title, expand: true, fill: true, padding: 30)
+    dialog.add_buttons(['Yes', Gtk::ResponseType::YES], ['No', Gtk::ResponseType::NO])
+
+    if dialog.run == Gtk::ResponseType::YES
+      @frame_list.delete_all if mode == 'new'
+      Gtk.main_quit if mode == 'quit'
+    end
+
+    dialog
   end
 
   def create_frame(filename)
@@ -217,10 +314,12 @@ class APNGAsmGUI::EditorWindow
   def file_import(filename)
     adapter = APNGAsmGUI::Adapter.new
     new_frames = adapter.import(@frame_list, filename)
+
     new_frames.each do |frame|
       @frame_list << frame
       @frame_list.frame_hbox.pack_start(frame, expand: false, fill: false, padding: 10)
     end
+
     $preview.set_pixbuf(@frame_list.pixbuf(@frame_list.cur)) if @frame_list.size > 0
     @window_base.show_all
   end

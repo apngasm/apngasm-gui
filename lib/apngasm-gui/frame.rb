@@ -16,10 +16,22 @@ class APNGAsmGUI::Frame < Gtk::Frame
       image = Gtk::Image.new(file: @filename)
     else
       # TODO Create image from APNGFrame...
-      # pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s, Gdk::Pixbuf::COLORSPACE_RGB, true, 8,
-      #                          @apngframe.width, @apngframe.height, @apngframe.width)
+      # tmp_pixels = @apngframe.pixels
+      # pixels = []
+      # tmp_pixels.each do |pixel|
+      #   pixels << "0x#{"%02x" % pixel}"
+      # end
+      # data = Gdk::Pixdata.deserialize(tmp_pixels)
+
+      pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s, Gdk::Pixbuf::COLORSPACE_RGB, true, 8,
+                               @apngframe.width, @apngframe.height, @apngframe.width * 4)
       # pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s)
-      pixbuf = Gdk::Pixbuf.new(Gdk::Pixbuf::COLORSPACE_RGB, true, 8, @apngframe.width, @apngframe.height)
+      
+      # pixmap = Cairo::ImageSurface.new(pixels.to_s, Cairo::FORMAT_ARGB32, @apngframe.width, @apngframe.height,
+      #   Cairo::Format.stride_for_width(Cairo::FORMAT_ARGB32, @apngframe.width))
+      # pixbuf = Gdk::Pixbuf.new(pixels, true)
+
+      # pixbuf = Gdk::Pixbuf.new(Gdk::Pixbuf::COLORSPACE_RGB, true, 8, @apngframe.width, @apngframe.height)
       image = Gtk::Image.new
       image.pixbuf = pixbuf
     end

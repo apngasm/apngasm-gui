@@ -13,24 +13,24 @@ class APNGAsmGUI::Adapter
     apngframes = @apngasm.disassemble(filename)
     filename = set_filename(filename)
     new_frames = []
+
     apngframes.each_with_index do |apngframe, i|
       new_frames << APNGAsmGUI::Frame.new("#{filename}_#{i}.png", frame_list, apngframe)
     end
+
     new_frames
   end
 
   def export(frame_list, filename, frames_status)
-    filename = set_filename(filename)
     @apngasm.reset
+    filename = set_filename(filename)
 
     frame_list.list.each do |frame|
       @apngasm.add_frame(set_apngframe(frame))
     end
     @apngasm.assemble("#{filename}.png")
 
-    if frames_status
-      save_frames(filename)
-    end
+    save_frames(filename) if frames_status
 
     GC.start
   end

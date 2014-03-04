@@ -59,6 +59,21 @@ class APNGAsmGUI::FrameList
     end
   end
 
+  def delete_at(index)
+    child = @list[index]
+    delete(child)
+  end
+
+  def delete_all
+    for i in 0..@list.size do
+      child = @list[0]
+      @list.delete(child)
+      @frame_hbox.remove(child)
+    end
+    @cur == 0
+    $preview.set_stock(Gtk::Stock::MISSING_IMAGE)
+  end
+
   def focus(child)
     @cur = @list.find_index(child)
     $preview.set_pixbuf(@list[@cur].pixbuf)
