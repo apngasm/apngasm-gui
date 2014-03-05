@@ -1,4 +1,5 @@
 require 'gtk3'
+require 'tmpdir'
 
 class APNGAsmGUI::Frame < Gtk::Frame
   THUMBNAIL_SIZE = 100
@@ -15,27 +16,13 @@ class APNGAsmGUI::Frame < Gtk::Frame
       @apngframe = @generator.init_with_file(@filename)
       image = Gtk::Image.new(file: @filename)
     else
-      # TODO Create image from APNGFrame...
-      # tmp_pixels = @apngframe.pixels
-      # pixels = []
-      # tmp_pixels.each do |pixel|
-      #   pixels << "0x#{"%02x" % pixel}"
-      # end
-      # data = Gdk::Pixdata.deserialize(tmp_pixels)
-
-      pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s, Gdk::Pixbuf::COLORSPACE_RGB, true, 8,
-                               @apngframe.width, @apngframe.height, @apngframe.width * 4)
-      # pixbuf = Gdk::Pixbuf.new(@apngframe.pixels.to_s)
-      
-      # pixmap = Cairo::ImageSurface.new(pixels.to_s, Cairo::FORMAT_ARGB32, @apngframe.width, @apngframe.height,
-      #   Cairo::Format.stride_for_width(Cairo::FORMAT_ARGB32, @apngframe.width))
-      # pixbuf = Gdk::Pixbuf.new(pixels, true)
-
-      # pixbuf = Gdk::Pixbuf.new(Gdk::Pixbuf::COLORSPACE_RGB, true, 8, @apngframe.width, @apngframe.height)
-      image = Gtk::Image.new
-      image.pixbuf = pixbuf
+      Dir::mktmpdir(nil, File.dirname(__FILE__)) do |dir|
+        @apngframe.save("#{dir}/#{@filename}")
+        image = Gtk::Image.new(file: "#{dir}/#{@filename}")
+      end
     end
-    if image.pixbuf.width != nil && image.pixbuf.height != nil
+
+    if image.pixbuf != nil
       if image.pixbuf.width > THUMBNAIL_SIZE || image.pixbuf.height > THUMBNAIL_SIZE
         image.pixbuf = resize(image.pixbuf, THUMBNAIL_SIZE)
       end
@@ -58,9 +45,9 @@ class APNGAsmGUI::Frame < Gtk::Frame
     box.pack_start(@delay_spinner, expand: false, fill: false)
 
     delete_button = Gtk::Button.new(label: 'Delete')
-    delete_button.signal_connect('clicked') {
+    delete_button.signal_connect('clicked') do
       @parent.delete(self)
-    }
+    end
     box.pack_start(delete_button, expand: false, fill: false)
 
     add(box)

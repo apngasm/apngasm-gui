@@ -165,6 +165,7 @@ class APNGAsmGUI::EditorWindow
 
     @help_about = @builder['menu_help_about']
     @help_about.signal_connect('activate') do
+      # TODO
       p 'about...'
     end
 
@@ -259,6 +260,7 @@ class APNGAsmGUI::EditorWindow
     dialog.add_buttons(['Yes', Gtk::ResponseType::YES], ['No', Gtk::ResponseType::NO])
 
     if dialog.run == Gtk::ResponseType::YES
+      @import_button.filename = 'blank'
       @frame_list.delete_all if mode == 'new'
       Gtk.main_quit if mode == 'quit'
     end

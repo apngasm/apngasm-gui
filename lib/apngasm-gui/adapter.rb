@@ -1,8 +1,8 @@
-require 'rapngasm'
+# require 'rapngasm'
 require 'fileutils'
 require_relative 'frame_list.rb'
 require_relative 'frame.rb'
-# require_relative 'rapngasm.bundle'
+require_relative 'rapngasm.bundle'
 
 class APNGAsmGUI::Adapter
   def initialize
@@ -10,8 +10,9 @@ class APNGAsmGUI::Adapter
   end
 
   def import(frame_list, filename)
+    @apngasm.reset
     apngframes = @apngasm.disassemble(filename)
-    filename = set_filename(filename)
+    filename = File.basename(filename, '.png')
     new_frames = []
 
     apngframes.each_with_index do |apngframe, i|
