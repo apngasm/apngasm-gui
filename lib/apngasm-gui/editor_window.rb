@@ -165,8 +165,7 @@ class APNGAsmGUI::EditorWindow
 
     @help_about = @builder['menu_help_about']
     @help_about.signal_connect('activate') do
-      # TODO
-      p 'about...'
+      help_dialog
     end
 
     @window_base.signal_connect('destroy') do
@@ -236,6 +235,14 @@ class APNGAsmGUI::EditorWindow
       file_export(File.expand_path(dialog.filename))
     end
 
+    dialog.destroy
+  end
+
+  def help_dialog
+    # TODO dialog message
+    dialog = Gtk::MessageDialog.new(message: 'apngasm-gui is a software to create an APNG file.',
+                             parent: @window_base)
+    dialog.run
     dialog.destroy
   end
 

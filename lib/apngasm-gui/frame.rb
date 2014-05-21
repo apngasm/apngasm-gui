@@ -7,13 +7,11 @@ class APNGAsmGUI::Frame < Gtk::Frame
 
   def initialize(filename, parent, apngframe = nil)
     super()
-    @generator = APNGFrameGenerator.new
     @filename = filename
     @parent = parent
     @apngframe = apngframe
 
     if @apngframe.nil?
-      @apngframe = @generator.init_with_file(@filename)
       image = Gtk::Image.new(file: @filename)
     else
       Dir::mktmpdir(nil, File.dirname(__FILE__)) do |dir|
@@ -41,7 +39,7 @@ class APNGAsmGUI::Frame < Gtk::Frame
 
     adjustment = Gtk::Adjustment.new(100, 1, 999, 1, 1, 0)
     @delay_spinner = Gtk::SpinButton.new(adjustment, 1, 0)
-    set_delay(@apngframe.delay_numerator)
+    set_delay(@apngframe.nil? ? 100 : @apngframe.delay_numerator)
     box.pack_start(@delay_spinner, expand: false, fill: false)
 
     delete_button = Gtk::Button.new(label: 'Delete')

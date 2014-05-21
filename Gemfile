@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+gemspec
+
 group :development do
   gem 'libnotify'
   gem 'guard'
@@ -7,6 +9,3 @@ group :development do
   gem 'rubocop'
   gem 'guard-rubocop'
 end
-
-gem 'gtk3'
-gem 'rapngasm'
