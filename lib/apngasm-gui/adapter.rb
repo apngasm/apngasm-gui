@@ -2,7 +2,6 @@ require 'rapngasm'
 require 'fileutils'
 require_relative 'frame_list.rb'
 require_relative 'frame.rb'
-# require_relative 'rapngasm.bundle'
 
 class APNGAsmGUI::Adapter
   def initialize
@@ -27,7 +26,11 @@ class APNGAsmGUI::Adapter
     filename = set_filename(filename)
 
     frame_list.list.each do |frame|
-      @apngasm.add_frame(set_apngframe(frame))
+      if frame.apngframe.nil?
+        @apngasm.add_frame_file(frame.filename, frame.delay)
+      else
+        set_apngframe(frame)
+      end
     end
     @apngasm.assemble("#{filename}.png")
 
@@ -45,19 +48,12 @@ class APNGAsmGUI::Adapter
   end
 
   def set_apngframe(frame)
-    # frame.apngframe.delay_numerator(frame.delay)
-    # frame.apngframe
-    generator = APNGFrameGenerator.new
-    new_frame = APNGFrame.new
     filename = "#{File.basename(frame.filename, '.png')}"
 
     Dir::mktmpdir(nil, File.dirname(__FILE__)) do |dir|
-      frame.apngframe.save("#{dir}/#{filename}")
-      new_frame = generator.init_with_file("#{dir}/#{filename}")
+      frame.apngframe.save("#{dir}/#{filename}.png")
+      @apngasm.add_frame_file("#{dir}/#{filename}.png", frame.delay)
     end
-
-    new_frame.delay_numerator(frame.delay)
-    new_frame
   end
 
   def set_filename(filename)
