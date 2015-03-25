@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="3.6"/>
   <object class="GtkImage" id="export_button_image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -179,11 +180,10 @@
                     </child>
                     <child>
                       <object class="GtkCheckMenuItem" id="menu_play_loop">
-                        <property name="label">Loop</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="label">Loop</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
                       </object>
                     </child>
                   </object>
@@ -232,26 +232,24 @@
                 <property name="spacing">10</property>
                 <child>
                   <object class="GtkScrolledWindow" id="viewport_scrolledwindow">
-                  <property name="visible">True</property>
-                  <property name="can_focus">false</property>
-                  <property name="hscrollbar_policy">automatic</property>
-                  <property name="vscrollbar_policy">automatic</property>
-                  <child>
-                    <object class="GtkViewport" id="viewport_preview">
-                      <property name="visible">True</property>
-                      <property name="can_focus">False</property>
-                      <property name="resize_mode">queue</property>
-                      <child>
-                        <object class="GtkImage" id="preview_image">
-                          <property name="visible">True</property>
-                          <property name="can_focus">False</property>
-                          <property name="xpad">10</property>
-                          <property name="ypad">10</property>
-                          <property name="stock">gtk-missing-image</property>
-                        </object>
-                      </child>
-                    </object>
-                  </child>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkViewport" id="viewport_preview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="resize_mode">queue</property>
+                        <child>
+                          <object class="GtkImage" id="preview_image">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="xpad">10</property>
+                            <property name="ypad">10</property>
+                            <property name="stock">gtk-missing-image</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -265,10 +263,13 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkButton" id="first_button">
+                        <property name="label">gtk-goto-first</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">first_img</property>
+                        <property name="relief">half</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -278,10 +279,12 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="back_button">
+                        <property name="label">gtk-go-back</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">previous_img</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -291,10 +294,12 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="play_button">
+                        <property name="label">gtk-media-play</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">play_img</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -304,10 +309,12 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="forward_button">
+                        <property name="label">gtk-go-forward</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">next_img</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -317,10 +324,12 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="last_button">
+                        <property name="label">gtk-goto-last</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="image">last_img</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -335,6 +344,8 @@
                         <property name="can_focus">False</property>
                         <property name="receives_default">True</property>
                         <property name="use_stock">True</property>
+                        <property name="image_position">bottom</property>
+                        <property name="always_show_image">True</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>

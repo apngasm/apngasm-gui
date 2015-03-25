@@ -11,6 +11,6 @@ Gem::Specification.new do |s|
 
   s.executables << 'apngasm-gui'
 
-  s.add_dependency 'rapngasm', '~> 3.1', '3.1.2'
+  s.add_dependency 'rapngasm', '~> 3.1', '3.1.6'
   s.add_dependency 'gtk3'
 end
