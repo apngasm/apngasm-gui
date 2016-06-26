@@ -201,7 +201,7 @@ class APNGAsmGUI::EditorWindow
   end
 
   def add_dialog
-    dialog = create_dialog('Open File', Gtk::FileChooser::Action::OPEN, Gtk::Stock::OPEN)
+    dialog = create_dialog('Open File', Gtk::FileChooserAction::OPEN, Gtk::Stock::OPEN)
     dialog.set_select_multiple(true) 
     dialog.add_filter(create_filter)
 
@@ -296,7 +296,7 @@ class APNGAsmGUI::EditorWindow
 
   def play_animation
     @play = true
-    image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_STOP, size: Gtk::IconSize::IconSize::BUTTON)
+    image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_STOP, size: Gtk::IconSize::BUTTON)
     @play_button.set_image(image)
 
     @frame_list.cur = 0
@@ -316,7 +316,7 @@ class APNGAsmGUI::EditorWindow
     GLib::Source.remove(@handle)
 
     @play = false
-    image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_PLAY, size: Gtk::IconSize::IconSize::BUTTON)
+    image = Gtk::Image.new(stock: Gtk::Stock::MEDIA_PLAY, size: Gtk::IconSize::BUTTON)
     @play_button.set_image(image)
   end
 
